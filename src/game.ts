@@ -208,7 +208,7 @@ module game {
   }
 
   export function shouldShowImage(row: number, col: number): boolean {
-    return state.board[row][col] !== "" || isProposal(row, col);
+    return state.board[row][col] !== '' || isProposal(row, col);
   }
 
   function isPiece(row: number, col: number, turnIndex: number, pieceKind: string): boolean {
@@ -216,11 +216,13 @@ module game {
   }
   
   export function isPieceX(row: number, col: number): boolean {
-    return isPiece(row, col, 0, 'X');
+    //console.log("isPieceR=" + isPiece(row, col, 0, 'R')+ " row,col = "+ row +","+col);
+    return isPiece(row, col, 0, 'R');
   }
 
   export function isPieceO(row: number, col: number): boolean {
-    return isPiece(row, col, 1, 'O');
+    //console.log("isPieceB=" + isPiece(row, col, 1, 'B')+ " row,col = "+ row +","+col);
+    return isPiece(row, col, 1, 'B');
   }
 
   export function shouldSlowlyAppear(row: number, col: number): boolean {

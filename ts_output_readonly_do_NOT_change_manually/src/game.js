@@ -191,18 +191,20 @@ var game;
     }
     game.cellClicked = cellClicked;
     function shouldShowImage(row, col) {
-        return game.state.board[row][col] !== "" || isProposal(row, col);
+        return game.state.board[row][col] !== '' || isProposal(row, col);
     }
     game.shouldShowImage = shouldShowImage;
     function isPiece(row, col, turnIndex, pieceKind) {
         return game.state.board[row][col] === pieceKind || (isProposal(row, col) && game.currentUpdateUI.turnIndex == turnIndex);
     }
     function isPieceX(row, col) {
-        return isPiece(row, col, 0, 'X');
+        //console.log("isPieceR=" + isPiece(row, col, 0, 'R')+ " row,col = "+ row +","+col);
+        return isPiece(row, col, 0, 'R');
     }
     game.isPieceX = isPieceX;
     function isPieceO(row, col) {
-        return isPiece(row, col, 1, 'O');
+        //console.log("isPieceB=" + isPiece(row, col, 1, 'B')+ " row,col = "+ row +","+col);
+        return isPiece(row, col, 1, 'B');
     }
     game.isPieceO = isPieceO;
     function shouldSlowlyAppear(row, col) {

@@ -94,7 +94,7 @@ module gameLogic {
        let other: string;
        let curr: string;
 
-       if(turn == 0) {
+       if(turn === 0) {
           curr = 'R';
           other = 'B';
        }
@@ -123,7 +123,7 @@ module gameLogic {
 
        return {row: -1, col: -1};
   }
-
+       
   /**
    * Returns the set of all possible moves that can be performed by a player in the current move
    */
@@ -132,7 +132,7 @@ module gameLogic {
        let temp : BoardDelta;
        let curr: string;
 
-       if(turn == 0) {
+       if(turn === 0) {
           curr = 'R';
        }
        else {
@@ -189,11 +189,74 @@ module gameLogic {
   }
 
   /**
+   * Changes the board item colors based on current move
+   */
+  function changeColor(board: Board, row: number, col: number, turn: number) : Board {
+        let newBoard : Board = angular.copy(board);
+        let other: string;
+        let curr: string;
+
+        if(turn === 0) {
+          curr = 'R';
+          other = 'B';
+        }
+        else {
+          curr = 'B';
+          other = 'R';
+        }  
+
+        // check all eight directions
+        for (var rowDir = -1; rowDir <= 1; rowDir++) {
+            for (var colDir = -1; colDir <= 1; colDir++) {
+                // dont check the actual position
+                if (rowDir === 0 && colDir === 0) {
+                    continue;
+                }
+                // move to next item
+                let rowCheck : number = row + rowDir;
+                let colCheck : number = col + colDir;
+                let itemFound: boolean = false;
+
+                while (rowCheck >= 0 && rowCheck < ROWS && colCheck >=0 && colCheck < COLS && newBoard[rowCheck][colCheck] === other) {   
+                    // move to next position
+                    rowCheck += rowDir;
+                    colCheck += colDir;
+                    
+                    // item found
+                    itemFound = true; 
+                } // end while
+
+                // if some items were found
+                if (itemFound) {
+                    // now we need to check that the next item is one of ours
+                    if (rowCheck >= 0 && rowCheck < ROWS && colCheck >=0 && colCheck < COLS && newBoard[rowCheck][colCheck] === curr) {
+                        // we have to change color
+                        rowCheck = row + rowDir;
+                        colCheck = col + colDir;
+
+                        while (newBoard[rowCheck][colCheck] === other) {  
+                           //change color  
+                           newBoard[rowCheck][colCheck] = curr;
+
+                           // move to next position
+                           rowCheck += rowDir;
+                           colCheck += colDir;
+                        }
+                    }
+                } // end if                
+            }
+        }
+
+        return newBoard;
+  }
+
+  /**
    * Returns the move that should be performed when player
    * with index turnIndexBeforeMove makes a move in cell row X col.
    */
   export function createMove(
       stateBeforeMove: IState, row: number, col: number, turnIndexBeforeMove: number): IMove {
+ 
     if (!stateBeforeMove) {
       stateBeforeMove = getInitialState();
     }
@@ -205,7 +268,7 @@ module gameLogic {
     }
 
     let allMovesRed : BoardDelta[] = getAllPossibleMoves(board, 0);
-    let allMovesBlue : BoardDelta[] = getAllPossibleMoves(board, 0);
+    let allMovesBlue : BoardDelta[] = getAllPossibleMoves(board, 1);
 
     if (allMovesRed.length <= 0 && allMovesBlue.length <= 0) {
       throw new Error("Can only make a move if the game is not over!");
@@ -242,6 +305,8 @@ module gameLogic {
     let boardAfterMove = angular.copy(board);
 
     boardAfterMove[row][col] = turnIndexBeforeMove === 0 ? 'R' : 'B';
+    boardAfterMove = changeColor(boardAfterMove, row, col, turnIndexBeforeMove);
+
     let endMatchScores: number[];
     let winner : string = '';
     let turnIndex: number;
@@ -265,7 +330,7 @@ module gameLogic {
       turnIndex: turnIndex,
       state: state
     };
-  }
+  } 
 
   /**
    * Returns the first move
