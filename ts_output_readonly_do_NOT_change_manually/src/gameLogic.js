@@ -18,10 +18,10 @@ var gameLogic;
                 board[i][j] = '';
             }
         }
+        board[3][3] = 'R';
+        board[3][4] = 'B';
+        board[4][3] = 'B';
         board[4][4] = 'R';
-        board[4][5] = 'B';
-        board[5][4] = 'B';
-        board[5][5] = 'R';
         return board;
     }
     gameLogic.getInitialBoard = getInitialBoard;
