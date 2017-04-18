@@ -44,6 +44,14 @@ body {
   border-top: 2pt dashed brown;
 }
 
+.highlightred{
+  background-color: red;
+  opacity: 0.5;
+}
+.highlightblue{
+  background-color: blue;
+  opacity: 0.5;
+}
 
 .slowlyAppear {
   animation: slowlyAppear 0.5s linear;

@@ -31954,6 +31954,7 @@ var game;
             updateUI: updateUI,
             getStateForOgImage: null,
         });
+        game.redTurn = true;
     }
     game.init = init;
     function registerServiceWorker() {
@@ -32115,6 +32116,12 @@ var game;
             log.info(["Cell is already full in position:", row, col]);
             return;
         }
+        if (nextMove.turnIndex === 0) {
+            game.redTurn = true;
+        }
+        else if (nextMove.turnIndex === 1) {
+            game.redTurn = false;
+        }
         // Move is legal, make it!
         makeMove(nextMove);
     }
@@ -32136,6 +32143,31 @@ var game;
         return isPiece(row, col, 1, 'B');
     }
     game.isPieceO = isPieceO;
+    /* export function isPossibleMove(board: Board, row: number, col: number, turnIndex: number): boolean {
+        let allPossibleMoves : BoardDelta[] = gameLogic.getAllPossibleMoves(board, turnIndex);
+        for(let i : number = 0; i < allPossibleMoves.length; i++) {
+           if(row === allPossibleMoves[i].row && col === allPossibleMoves[i].col) {
+              return true;
+           }
+        }
+        return false;
+     }*/
+    function isPossibleRedMove(row, col) {
+        console.log("redturn = " + game.redTurn);
+        if (game.redTurn) {
+            return true;
+        }
+        return false;
+    }
+    game.isPossibleRedMove = isPossibleRedMove;
+    function isPossibleBlueMove(row, col) {
+        console.log("blueturn = " + !game.redTurn);
+        if (!game.redTurn) {
+            return true;
+        }
+        return false;
+    }
+    game.isPossibleBlueMove = isPossibleBlueMove;
     function shouldSlowlyAppear(row, col) {
         return game.state.delta &&
             game.state.delta.row === row && game.state.delta.col === col;

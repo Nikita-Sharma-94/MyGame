@@ -21,6 +21,9 @@ module game {
   export let proposals: number[][] = null;
   export let yourPlayerInfo: IPlayerInfo = null;
 
+  // For highlighting possible moves
+  export let redTurn : boolean;
+
   export function init($rootScope_: angular.IScope, $timeout_: angular.ITimeoutService) {
     $rootScope = $rootScope_;
     $timeout = $timeout_;
@@ -32,6 +35,8 @@ module game {
       updateUI: updateUI,
       getStateForOgImage: null,
     });
+
+    redTurn = true;
   }
 
   function registerServiceWorker() {
@@ -203,8 +208,15 @@ module game {
       log.info(["Cell is already full in position:", row, col]);
       return;
     }
+    if(nextMove.turnIndex === 0) {
+        redTurn = true;
+    }
+    else if(nextMove.turnIndex === 1) {
+        redTurn = false;
+    }
     // Move is legal, make it!
     makeMove(nextMove);
+    
   }
 
   export function shouldShowImage(row: number, col: number): boolean {
@@ -224,6 +236,33 @@ module game {
     //console.log("isPieceB=" + isPiece(row, col, 1, 'B')+ " row,col = "+ row +","+col);
     return isPiece(row, col, 1, 'B');
   }
+
+ /* export function isPossibleMove(board: Board, row: number, col: number, turnIndex: number): boolean {
+     let allPossibleMoves : BoardDelta[] = gameLogic.getAllPossibleMoves(board, turnIndex);
+     for(let i : number = 0; i < allPossibleMoves.length; i++) {
+        if(row === allPossibleMoves[i].row && col === allPossibleMoves[i].col) {
+           return true;
+        }
+     }
+     return false;
+  }*/
+
+  export function isPossibleRedMove(row: number, col: number): boolean {
+    console.log("redturn = "+redTurn);
+     if(redTurn) {
+        return true;
+     }  
+     return false;
+  }
+
+  export function isPossibleBlueMove(row: number, col: number): boolean {
+    console.log("blueturn = "+!redTurn);
+     if(!redTurn) {
+       return true;
+     }  
+     return false;
+  }
+
 
   export function shouldSlowlyAppear(row: number, col: number): boolean {
     return state.delta &&
