@@ -260,6 +260,12 @@ var gameLogic;
             turnIndex = -1;
             endMatchScores = getScores(boardAfterMove);
             winner = getWinner(endMatchScores);
+            endMatchScores = winner === 'R' ? [1, 0] : winner === 'B' ? [0, 1] : [0, 0];
+        }
+        else if (getAllPossibleMoves(boardAfterMove, 1 - turnIndexBeforeMove).length <= 0) {
+            // Game continues. Opponent's can't move so it's your turn again.
+            turnIndex = turnIndexBeforeMove;
+            endMatchScores = null;
         }
         else {
             // Game continues. Now it's the opponent's turn (the turn switches from 0 to 1 and 1 to 0).

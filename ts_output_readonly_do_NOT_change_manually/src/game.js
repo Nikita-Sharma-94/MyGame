@@ -25,7 +25,6 @@ var game;
             updateUI: updateUI,
             getStateForOgImage: null,
         });
-        game.redTurn = true;
     }
     game.init = init;
     function registerServiceWorker() {
@@ -102,6 +101,8 @@ var game;
         game.state = params.state;
         if (isFirstMove()) {
             game.state = gameLogic.getInitialState();
+            game.redTurn = true;
+            game.possibleMoves = [{ row: 2, col: 4 }, { row: 3, col: 5 }];
         }
         // We calculate the AI move only after the animation finishes,
         // because if we call aiService now
@@ -129,6 +130,8 @@ var game;
         };
         var move = aiService.findComputerMove(currentMove);
         log.info("Computer move: ", move);
+        game.possibleMoves = gameLogic.getAllPossibleMoves(move.state.board, move.turnIndex);
+        game.redTurn = move.turnIndex === 0 ? true : false;
         makeMove(move);
     }
     function makeMove(move) {
@@ -187,6 +190,7 @@ var game;
             log.info(["Cell is already full in position:", row, col]);
             return;
         }
+        game.possibleMoves = gameLogic.getAllPossibleMoves(nextMove.state.board, nextMove.turnIndex);
         if (nextMove.turnIndex === 0) {
             game.redTurn = true;
         }
@@ -198,7 +202,7 @@ var game;
     }
     game.cellClicked = cellClicked;
     function shouldShowImage(row, col) {
-        return game.state.board[row][col] !== '' || isProposal(row, col);
+        return game.state.board[row][col] !== '' || isProposal(row, col) || isPossibleMove(row, col);
     }
     game.shouldShowImage = shouldShowImage;
     function isPiece(row, col, turnIndex, pieceKind) {
@@ -214,27 +218,25 @@ var game;
         return isPiece(row, col, 1, 'B');
     }
     game.isPieceO = isPieceO;
-    /* export function isPossibleMove(board: Board, row: number, col: number, turnIndex: number): boolean {
-        let allPossibleMoves : BoardDelta[] = gameLogic.getAllPossibleMoves(board, turnIndex);
-        for(let i : number = 0; i < allPossibleMoves.length; i++) {
-           if(row === allPossibleMoves[i].row && col === allPossibleMoves[i].col) {
-              return true;
-           }
+    function isPossibleMove(row, col) {
+        for (var i = 0; i < game.possibleMoves.length; i++) {
+            if (row === game.possibleMoves[i].row && col === game.possibleMoves[i].col) {
+                return true;
+            }
         }
         return false;
-     }*/
+    }
+    game.isPossibleMove = isPossibleMove;
     function isPossibleRedMove(row, col) {
-        console.log("redturn = " + game.redTurn);
-        if (game.redTurn) {
-            return true;
+        if (game.redTurn && isHumanTurn()) {
+            return isPossibleMove(row, col);
         }
         return false;
     }
     game.isPossibleRedMove = isPossibleRedMove;
     function isPossibleBlueMove(row, col) {
-        console.log("blueturn = " + !game.redTurn);
-        if (!game.redTurn) {
-            return true;
+        if (!game.redTurn && isHumanTurn()) {
+            return isPossibleMove(row, col);
         }
         return false;
     }

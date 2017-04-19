@@ -23,6 +23,7 @@ module game {
 
   // For highlighting possible moves
   export let redTurn : boolean;
+  export let possibleMoves : BoardDelta[];
 
   export function init($rootScope_: angular.IScope, $timeout_: angular.ITimeoutService) {
     $rootScope = $rootScope_;
@@ -35,8 +36,6 @@ module game {
       updateUI: updateUI,
       getStateForOgImage: null,
     });
-
-    redTurn = true;
   }
 
   function registerServiceWorker() {
@@ -115,6 +114,8 @@ module game {
     state = params.state;
     if (isFirstMove()) {
       state = gameLogic.getInitialState();
+      redTurn = true;
+      possibleMoves = [{row: 2, col: 4}, {row: 3, col: 5}];
     }
     // We calculate the AI move only after the animation finishes,
     // because if we call aiService now
@@ -143,6 +144,8 @@ module game {
     }
     let move = aiService.findComputerMove(currentMove);
     log.info("Computer move: ", move);
+    possibleMoves = gameLogic.getAllPossibleMoves(move.state.board, move.turnIndex);
+    redTurn = move.turnIndex === 0 ? true : false;    
     makeMove(move);
   }
 
@@ -208,6 +211,8 @@ module game {
       log.info(["Cell is already full in position:", row, col]);
       return;
     }
+
+    possibleMoves = gameLogic.getAllPossibleMoves(nextMove.state.board, nextMove.turnIndex);
     if(nextMove.turnIndex === 0) {
         redTurn = true;
     }
@@ -216,11 +221,10 @@ module game {
     }
     // Move is legal, make it!
     makeMove(nextMove);
-    
   }
 
   export function shouldShowImage(row: number, col: number): boolean {
-    return state.board[row][col] !== '' || isProposal(row, col);
+    return state.board[row][col] !== '' || isProposal(row, col) || isPossibleMove(row,col);
   }
 
   function isPiece(row: number, col: number, turnIndex: number, pieceKind: string): boolean {
@@ -237,28 +241,25 @@ module game {
     return isPiece(row, col, 1, 'B');
   }
 
- /* export function isPossibleMove(board: Board, row: number, col: number, turnIndex: number): boolean {
-     let allPossibleMoves : BoardDelta[] = gameLogic.getAllPossibleMoves(board, turnIndex);
-     for(let i : number = 0; i < allPossibleMoves.length; i++) {
-        if(row === allPossibleMoves[i].row && col === allPossibleMoves[i].col) {
+  export function isPossibleMove(row: number, col: number): boolean {
+     for(let i : number = 0; i < possibleMoves.length; i++) {
+        if(row === possibleMoves[i].row && col === possibleMoves[i].col) {
            return true;
         }
      }
      return false;
-  }*/
+  }
 
   export function isPossibleRedMove(row: number, col: number): boolean {
-    console.log("redturn = "+redTurn);
-     if(redTurn) {
-        return true;
+     if(redTurn && isHumanTurn()) {
+        return isPossibleMove(row,col);
      }  
      return false;
   }
 
   export function isPossibleBlueMove(row: number, col: number): boolean {
-    console.log("blueturn = "+!redTurn);
-     if(!redTurn) {
-       return true;
+     if(!redTurn && isHumanTurn()) {
+       return isPossibleMove(row,col);
      }  
      return false;
   }
