@@ -45,13 +45,13 @@ body {
 }
 
 .highlightred{
-  margin: 3px 20px 20px 3px;
+  margin: 3px 3px 3px 3px;
   background-color: red;
   opacity: 0.2;
   transition: opacity 0.5s ease-in-out, background-color 0.5s ease-in-out;
 }
 .highlightblue{
-  margin: 3px 20px 20px 3px;
+  margin: 3px 3px 3px 3px;
   background-color: blue;
   opacity: 0.2;
   transition: opacity 0.5s ease-in-out, background-color 0.5s ease-in-out;
