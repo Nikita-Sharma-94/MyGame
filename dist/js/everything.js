@@ -32039,6 +32039,15 @@ var game;
             game.redTurn = true;
             game.possibleMoves = [{ row: 2, col: 4 }, { row: 3, col: 5 }];
         }
+        else {
+            game.possibleMoves = gameLogic.getAllPossibleMoves(params.state.board, params.turnIndex);
+            if (params.turnIndex === 0) {
+                game.redTurn = true;
+            }
+            else if (params.turnIndex === 1) {
+                game.redTurn = false;
+            }
+        }
         // We calculate the AI move only after the animation finishes,
         // because if we call aiService now
         // then the animation will be paused until the javascript finishes.
@@ -32125,13 +32134,13 @@ var game;
             log.info(["Cell is already full in position:", row, col]);
             return;
         }
-        game.possibleMoves = gameLogic.getAllPossibleMoves(nextMove.state.board, nextMove.turnIndex);
-        if (nextMove.turnIndex === 0) {
-            game.redTurn = true;
+        /*possibleMoves = gameLogic.getAllPossibleMoves(nextMove.state.board, nextMove.turnIndex);
+        if(nextMove.turnIndex === 0) {
+            redTurn = true;
         }
-        else if (nextMove.turnIndex === 1) {
-            game.redTurn = false;
-        }
+        else if(nextMove.turnIndex === 1) {
+            redTurn = false;
+        }*/
         // Move is legal, make it!
         makeMove(nextMove);
     }

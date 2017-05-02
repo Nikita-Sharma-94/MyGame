@@ -117,6 +117,15 @@ module game {
       redTurn = true;
       possibleMoves = [{row: 2, col: 4}, {row: 3, col: 5}];
     }
+    else {
+      possibleMoves = gameLogic.getAllPossibleMoves(params.state.board, params.turnIndex);
+      if(params.turnIndex === 0) {
+        redTurn = true;
+      }
+      else if(params.turnIndex === 1) {
+        redTurn = false;
+      }
+    }
     // We calculate the AI move only after the animation finishes,
     // because if we call aiService now
     // then the animation will be paused until the javascript finishes.
@@ -212,13 +221,14 @@ module game {
       return;
     }
 
-    possibleMoves = gameLogic.getAllPossibleMoves(nextMove.state.board, nextMove.turnIndex);
+    /*possibleMoves = gameLogic.getAllPossibleMoves(nextMove.state.board, nextMove.turnIndex);
     if(nextMove.turnIndex === 0) {
         redTurn = true;
     }
     else if(nextMove.turnIndex === 1) {
         redTurn = false;
-    }
+    }*/
+
     // Move is legal, make it!
     makeMove(nextMove);
   }
